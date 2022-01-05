@@ -23,6 +23,7 @@ async function run() {
 		await client.connect();
 		const database = client.db("TechGadets");
 		const productCollection = database.collection("products");
+		const orderCollection = database.collection("orders");
 
 		// add product
 		app.post("/products", async (req, res) => {
@@ -30,12 +31,27 @@ async function run() {
 			const result = await productCollection.insertOne(product);
 
 			res.json(result);
+		});
+		// add order
+		app.post("/oreder", async (req, res) => {
+			const product = req.body;
+			const result = await orderCollection.insertOne(order);
+			res.json(result);
 			console.log(result);
 		});
 
 		// GET DATA
 		app.get("/products", async (req, res) => {
 			const result = await productCollection.find({}).toArray();
+			res.send(result);
+		});
+
+		// get data by id
+		app.get("/product/:id", async (req, res) => {
+			const id = req.params.id;
+			console.log(id);
+			const query = { _id: ObjectId(id) };
+			const result = await productCollection.findOne(query);
 			res.send(result);
 		});
 	} finally {
